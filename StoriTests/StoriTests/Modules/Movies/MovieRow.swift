@@ -12,15 +12,9 @@ struct MovieRow: View {
     var body: some View {
         NavigationLink(destination: MovieDetailView(movie: movie)) {
             HStack {
-                AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500/\(movie.backdropPath)")) { image in
-                    image.resizable()
-                } placeholder: {
-                    ProgressView()
-                }
-                .scaledToFit()
+                MovieImage(path: movie.backdropPath)
                 .frame(width: 100, height: 50)
                 
-                .clipped()
                 VStack(alignment: .leading) {
                     Text(movie.title)
                         .font(.body2)

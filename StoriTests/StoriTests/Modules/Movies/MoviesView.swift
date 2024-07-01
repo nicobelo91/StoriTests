@@ -18,17 +18,17 @@ struct MoviesView: View {
         TabView(selection: $viewModel.selectedTab) {
             TopRatedView()
                 .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
+                    Label(K.search, systemImage: "magnifyingglass")
                 }
                 .tag(Tab.search)
             FavoritesView()
                 .tabItem {
-                    Label("Favorites", systemImage: "heart.fill")
+                    Label(K.favorites, systemImage: "heart.fill")
                 }
                 .tag(Tab.favorite)
             MyListView()
                 .tabItem {
-                    Label("My List", systemImage: "star.fill")
+                    Label(K.mysList, systemImage: "star.fill")
                 }
                 .tag(Tab.myList)
         }
@@ -51,6 +51,15 @@ struct MoviesView: View {
             
         }
         viewModel.listedMovies = listedMovies
+    }
+}
+
+extension MoviesView {
+    //Constants
+    enum K {
+        static let search = "Search"
+        static let favorites = "Favorites"
+        static let mysList = "My List"
     }
 }
 

@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
 struct LineRatingView: View {
      var height: CGFloat = 10
     var value: Double = 0.0

@@ -13,7 +13,7 @@ struct MyListView: View {
         NavigationView {
             LoadingView(viewModel.isLoading) {
                 if viewModel.listedMovies.isEmpty {
-                    EmptyListView()
+                    emptyListView
                 } else {
                     List {
                         ForEach(viewModel.listedMovies, id: \.id) { movie in
@@ -22,7 +22,7 @@ struct MyListView: View {
                                     Button(action: {
                                         viewModel.addToMyList(movie)
                                     }) {
-                                        Label("Add to My List", systemImage: viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? "xmark" : "star")
+                                        Label(K.addToMyList, systemImage: viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? "xmark" : "star")
                                     }
                                     .tint(viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? .themeSecondary : .themePrimary)
                                 }
@@ -30,24 +30,33 @@ struct MyListView: View {
                     }.listStyle(.plain)
                 }
             }
-            .navigationTitle("My List")
+            .navigationTitle(K.myList)
         }
     }
 }
 
-struct EmptyListView: View {
-    var body: some View {
-        VStack {
-            Spacer()
-            Image(systemName: "star.fill")
-                .font(.system(size: 85))
-                .padding(.bottom)
-            Text("Add a movie to My List...")
-                .font(.title)
-            Spacer()
+extension MyListView {
+    private var emptyListView: some View {
+            VStack {
+                Spacer()
+                Image(systemName: "star.fill")
+                    .font(.system(size: 85))
+                    .padding(.bottom)
+                Text(K.addMovie)
+                    .font(.title)
+                Spacer()
+            }
+            .padding()
+            .foregroundColor(.themePrimary)
         }
-        .padding()
-        .foregroundColor(.themePrimary)
+}
+
+extension MyListView {
+    //Constants
+    enum K {
+        static let addMovie = "Add a movie to My List..."
+        static let addToMyList = "Add to My List"
+        static let myList = "My List"
     }
 }
 

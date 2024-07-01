@@ -24,6 +24,8 @@ class MoviesViewModel: ObservableObject {
         self.dataService = dataService
         getMovies()
     }
+    
+    /// Fetches a list of top rated movies from MoviesDB
     func getMovies() {
         isLoading = true
         Task {
@@ -44,30 +46,8 @@ class MoviesViewModel: ObservableObject {
         }
     }
     
-    func index(of movie: MovieModel) -> Int? {
-        for index in 0..<topRatedMovies.count {
-            if topRatedMovies[index].id == movie.id {
-                return index
-            }
-        }
-        return nil
-    }
-    
+    /// Adds or removes a movie from favoriteMovies
     func addToFavorites(_ movie: MovieModel) {
-//        guard let chosenIndex = index(of: movie) else { return }
-//        var indexedMovie = topRatedMovies[chosenIndex]
-//        objectWillChange.send()
-//        indexedMovie.isFavorite.toggle()
-//        
-//        if indexedMovie.isFavorite {
-//            if !favoriteMovies.contains(where: { $0.id == movie.id }) {
-//                favoriteMovies.append(indexedMovie)
-//            }
-//        } else {
-//            guard let index = favoriteMovies.firstIndex(where: { $0.id == movie.id }) else { return }
-//            favoriteMovies.remove(at: index)
-//        }
-        
         objectWillChange.send()
         movie.isFavorite.toggle()
         if movie.isFavorite {
@@ -80,6 +60,7 @@ class MoviesViewModel: ObservableObject {
         }
     }
     
+    /// Adds or removes a movie from listedMovies
     func addToMyList(_ movie: MovieModel) {
         objectWillChange.send()
         movie.isInMyList.toggle()
@@ -91,38 +72,17 @@ class MoviesViewModel: ObservableObject {
             guard let index = listedMovies.firstIndex(where: { $0.id == movie.id }) else { return }
             listedMovies.remove(at: index)
         }
-//        guard let chosenIndex = index(of: movie) else { return }
-//        var indexedMovie = topRatedMovies[chosenIndex]
-////        print(indexedMovie.isInMyList)
-////        indexedMovie.isInMyList.toggle()
-////        print(indexedMovie.isInMyList)
-//        if indexedMovie.isInMyList {
-//            indexedMovie.isInMyList = false
-////            if !listedMovies.contains(where: { $0.id == movie.id }) {
-////                listedMovies.append(indexedMovie)
-////            }
-//            guard let index = listedMovies.firstIndex(where: { $0.id == movie.id }) else { return }
-//            listedMovies.remove(at: index)
-//        } else {
-//            indexedMovie.isInMyList = true
-//            if !listedMovies.contains(where: { $0.id == movie.id }) {
-//                listedMovies.append(indexedMovie)
-//            }
-////            guard let index = listedMovies.firstIndex(where: { $0.id == movie.id }) else { return }
-////            listedMovies.remove(at: index)
-//        }
     }
     
+    /// When loading the data, looks for the movies that are already Favorites or in My List
     func findMovie(in movies: [MovieModel]) {
         for movie in movies {
-            if let chosenIndex = index(of: movie) {
-                if favoriteMovies.contains(where: { $0.id == movie.id }) {
-                    topRatedMovies[chosenIndex].isFavorite = true
-                    
-                }
-                if listedMovies.contains(where: { $0.id == movie.id }) {
-                    topRatedMovies[chosenIndex].isInMyList = true
-                }
+            if favoriteMovies.contains(where: { $0.id == movie.id }) {
+                movie.isFavorite = true
+                
+            }
+            if listedMovies.contains(where: { $0.id == movie.id }) {
+                movie.isInMyList = true
             }
         }
     }
