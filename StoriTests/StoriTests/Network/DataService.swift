@@ -18,20 +18,21 @@ enum CustomError: Error, Identifiable {
 }
 protocol DataService {
     //func fetchMovies(by searchTerm: String, completion: @escaping (Result<[Book], BookClubError>) -> Void)
-    func fetchMovies(page: Int) async throws -> MovieList
+    func fetchMovies(page: Int) async throws -> PaginatedMovieModel
 }
 
 class MovieDataService: DataService {
     
     let url = "https://api.themoviedb.org/3"
     let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiYzMyMTQ4ZGU0ZWVkNTMzMjJhYWQzMWZjODRjZjkyNCIsIm5iZiI6MTcxOTY3OTM2OS43MjY0ODUsInN1YiI6IjYxNTEwNTdhZjA0ZDAxMDA5MWM3ZGFhZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0CMSoyvJhyO8dP2Kwc9j0lkCrrgOr_H0jcMuv-Fs81w"
-    func fetchMovies(page: Int) async throws -> MovieList {
+    func fetchMovies(page: Int) async throws -> PaginatedMovieModel {
         let safeUrl = URL(string: "\(url)/movie/top_rated?page=\(page)")!
         var request = URLRequest(url: safeUrl)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
         let (data, _) = try await URLSession.shared.data(for: request)
-        return try JSONDecoder().decode(MovieList.self, from: data)
+        let result = try JSONDecoder().decode(MovieList.self, from: data)
+        return MovieMappers.apiListToDomain(result)
     }
     
 }

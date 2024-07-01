@@ -1,5 +1,5 @@
 //
-//  WishlistView.swift
+//  MyListView.swift
 //  StoriTests
 //
 //  Created by Nicolas Cobelo on 29/06/2024.
@@ -7,51 +7,50 @@
 
 import SwiftUI
 
-struct WishlistView: View {
+struct MyListView: View {
     @EnvironmentObject var viewModel: MoviesViewModel
     var body: some View {
         NavigationView {
             LoadingView(viewModel.isLoading) {
-                if viewModel.wishlistMovies.isEmpty {
-                    NoSavedView()
+                if viewModel.listedMovies.isEmpty {
+                    EmptyListView()
                 } else {
-                    //Text("Saved Items")
                     List {
-                        ForEach(viewModel.wishlistMovies, id: \.id) { movie in
+                        ForEach(viewModel.listedMovies, id: \.id) { movie in
                             MovieRow(movie: movie)
                                 .swipeActions(edge: .trailing) {
                                     Button(action: {
-                                        viewModel.save(movie)
+                                        viewModel.addToMyList(movie)
                                     }) {
-                                        Label("Saved", systemImage: movie.isFavorite ? "heart.fill" : "heart")
+                                        Label("Add to My List", systemImage: viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? "xmark" : "star")
                                     }
-                                    .tint(.blue)
+                                    .tint(viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? .themeSecondary : .themePrimary)
                                 }
                         }
                     }.listStyle(.plain)
                 }
             }
-            .navigationTitle("Saved")
+            .navigationTitle("My List")
         }
     }
 }
 
-struct NoSavedView: View {
+struct EmptyListView: View {
     var body: some View {
         VStack {
             Spacer()
             Image(systemName: "star.fill")
                 .font(.system(size: 85))
                 .padding(.bottom)
-            Text("Save a book...")
+            Text("Add a movie to My List...")
                 .font(.title)
             Spacer()
         }
         .padding()
-        .foregroundColor(Color(.systemIndigo))
+        .foregroundColor(.themePrimary)
     }
 }
 
 #Preview {
-    WishlistView()
+    MyListView()
 }

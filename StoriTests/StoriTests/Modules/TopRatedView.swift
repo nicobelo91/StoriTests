@@ -11,7 +11,7 @@ struct TopRatedView: View {
     @EnvironmentObject var viewModel: MoviesViewModel
     
     @AppStorage("favoriteMovies") var favoriteMoviesData = Data()
-    @AppStorage("wishlistMovies") var wishlistMoviesData = Data()
+    @AppStorage("listedMovies") var listedMoviesData = Data()
     
     var body: some View {
         NavigationView {
@@ -24,7 +24,7 @@ struct TopRatedView: View {
                             MovieRow(movie: movie)
                                 .swipeActions(edge: .trailing) {
                                     FavoriteButton(for: movie)
-                                    SaveButton(for: movie)
+                                    MyListButton(for: movie)
                                 }
                         }
                         if viewModel.isMoreDataAvailable {
@@ -47,15 +47,15 @@ struct EmptyStateView: View {
     var body: some View {
         VStack {
             Spacer()
-            Image(systemName: "book.fill")
+            Image(systemName: "movieclapper")
                 .font(.system(size: 85))
                 .padding(.bottom)
-            Text("Start searching for books...")
+            Text("Start searching for movies...")
                 .font(.title)
             Spacer()
         }
         .padding()
-        .foregroundColor(Color(.systemIndigo))
+        .foregroundColor(Color.themePrimary)
     }
 }
 
@@ -65,14 +65,15 @@ struct EmptyStateView: View {
 extension TopRatedView {
     
     var lastRowView: some View {
-        EmptyView()
+        Rectangle()
+            .fill(Color.clear)
         .frame(height: 50)
         .onAppear {
             viewModel.getMovies()
         }
     }
     
-    private func FavoriteButton(for movie: Movie) -> some View {
+    private func FavoriteButton(for movie: MovieModel) -> some View {
         Button(action: {
             viewModel.addToFavorites(movie)
             guard let movieData = try? JSONEncoder().encode(viewModel.favoriteMovies) else {
@@ -83,21 +84,21 @@ extension TopRatedView {
         }) {
             Label("Favorite", systemImage: viewModel.favoriteMovies.contains(where: { $0.id == movie.id }) ? "xmark" : "heart")
         }
-        .tint(movie.isFavorite ? .red : .blue)
+        .tint(viewModel.favoriteMovies.contains(where: { $0.id == movie.id }) ? .themeGreen2 : .themeDark)
     }
     
-    private func SaveButton(for movie: Movie) -> some View {
+    private func MyListButton(for movie: MovieModel) -> some View {
         Button(action: {
-            viewModel.save(movie)
-            guard let movieData = try? JSONEncoder().encode(viewModel.wishlistMovies) else {
+            viewModel.addToMyList(movie)
+            guard let movieData = try? JSONEncoder().encode(viewModel.listedMovies) else {
                 print("Coudln't encode the data")
                 return
             }
-            self.wishlistMoviesData = movieData
+            self.listedMoviesData = movieData
         }) {
-            Label("Save", systemImage: viewModel.wishlistMovies.contains(where: { $0.id == movie.id }) ? "xmark" : "star")
+            Label("Add to My List", systemImage: viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? "xmark" : "star")
         }
-        .tint(movie.isSaved ? .red : .yellow)
+        .tint(viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? .themeSecondary : .themePrimary)
     }
 }
 

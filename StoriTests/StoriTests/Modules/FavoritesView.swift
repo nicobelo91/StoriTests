@@ -21,9 +21,9 @@ struct FavoritesView: View {
                                 Button(action: {
                                     viewModel.addToFavorites(movie)
                                 }) {
-                                    Label("Favorite", systemImage: movie.isFavorite ? "heart.fill" : "heart")
+                                    Label("Favorite", systemImage: viewModel.favoriteMovies.contains(where: { $0.id == movie.id }) ? "xmark" : "heart")
                                 }
-                                .tint(.blue)
+                                .tint(viewModel.favoriteMovies.contains(where: { $0.id == movie.id }) ? .themeGreen2 : .themeDark)
                             }
                     }.listStyle(.plain)
                 }
@@ -45,7 +45,7 @@ struct NoFavoritesView: View {
             Spacer()
         }
         .padding()
-        .foregroundColor(Color(.systemIndigo))
+        .foregroundColor(.themePrimary)
     }
 }
 

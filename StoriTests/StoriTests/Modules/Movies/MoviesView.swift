@@ -8,12 +8,12 @@
 import SwiftUI
 
 enum Tab {
-    case search, favorite, saved
+    case search, favorite, myList
 }
 struct MoviesView: View {
     @StateObject var viewModel = MoviesViewModel()
     @AppStorage("favoriteMovies") var favoriteMoviesData = Data()
-    @AppStorage("wishlistMovies") var wishlistMoviesData = Data()
+    @AppStorage("listedMovies") var listedMoviesData = Data()
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
             TopRatedView()
@@ -26,30 +26,31 @@ struct MoviesView: View {
                     Label("Favorites", systemImage: "heart.fill")
                 }
                 .tag(Tab.favorite)
-            WishlistView()
+            MyListView()
                 .tabItem {
-                    Label("Saved", systemImage: "star.fill")
+                    Label("My List", systemImage: "star.fill")
                 }
-                .tag(Tab.saved)
+                .tag(Tab.myList)
         }
+        .accentColor(.themePrimary)
         .environmentObject(viewModel)
         .onAppear { loadData() }
     }
     
     private func loadData() {
-        guard let favoriteMovies = try? JSONDecoder().decode([Movie].self, from: favoriteMoviesData) else {
+        guard let favoriteMovies = try? JSONDecoder().decode([MovieModel].self, from: favoriteMoviesData) else {
             print("Couldn't decode the data")
             return
             
         }
         viewModel.favoriteMovies = favoriteMovies
         
-        guard let wishlistMovies = try? JSONDecoder().decode([Movie].self, from: wishlistMoviesData) else {
+        guard let listedMovies = try? JSONDecoder().decode([MovieModel].self, from: listedMoviesData) else {
             print("Couldn't decode the data")
             return
             
         }
-        viewModel.wishlistMovies = wishlistMovies
+        viewModel.listedMovies = listedMovies
     }
 }
 

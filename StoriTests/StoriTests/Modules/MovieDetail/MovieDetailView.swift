@@ -8,29 +8,56 @@
 import SwiftUI
 
 struct MovieDetailView: View {
-    let movie: Movie
+    @EnvironmentObject var viewModel: MoviesViewModel
+    let movie: MovieModel
     var body: some View {
-        VStack(spacing: 10) {
-            AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500/\(movie.posterPath)")) { image in
-                image.resizable()
-            } placeholder: {
-                ProgressView()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500/\(movie.posterPath)")) { image in
+                    image.resizable()
+                } placeholder: {
+                    ProgressView()
+                }
+                .scaledToFill()
+                .clipped()
+                
+                HStack {
+                    Spacer()
+                    Text(movie.title)
+                        .font(.headline)
+                    Spacer()
+                }
+                
+                LineRatingView( value: movie.voteAverage)
+                Text(DateHelper.Formatter.longGMTDate.string(from: movie.releaseDate))
+                    .font(.subheader)
+                
+                Text(movie.overview)
+                    .font(.body1)
+                    .padding(.bottom, 15)
+                
+                PrimaryButton(favoriteButtonText) {
+                    viewModel.addToFavorites(movie)
+                }
+                PrimaryButton(myListButtonText, color: .themeGreen) {
+                    viewModel.addToMyList(movie)
+                }
             }
-            .frame(width: 100, height: 150)
-            .clipped()
-            
-            Text(movie.title)
-                .font(.title)
-            Text(movie.releaseDate)
-                .font(.body)
-            Text("\(movie.voteAverage)")
-                .font(.body)
-            Text(movie.overview)
-                .font(.body)
+            .padding(.horizontal)
         }
+        .navigationBarTitleDisplayMode(.inline)
+       
+    }
+    
+    private var favoriteButtonText: String {
+        viewModel.favoriteMovies.contains(where: { $0.id == movie.id }) ? "Remove from favorites" : "Add to Favorites"
+    }
+    
+    private var myListButtonText: String {
+        viewModel.listedMovies.contains(where: { $0.id == movie.id }) ? "Remove from My List" : "Add to My List"
     }
 }
 
 #Preview {
-    MovieDetailView(movie: Movie.example)
+    MovieDetailView(movie: MovieModel.example)
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Protocol to be applied to all API models
-protocol APIModel: Codable, Equatable {}
+protocol APIModel: Codable {}
 
 /// Generic struct representing array of data of specified type
 struct DataList<T: APIModel>: APIModel {
@@ -23,23 +23,3 @@ struct DataList<T: APIModel>: APIModel {
             case totalResults = "total_results"
         }
 }
-
-//extension DataList {
-//    struct Meta: APIModel {
-//        struct Pagination: APIModel {
-//            struct Links: APIModel {
-//                var previous: String?
-//                var next: String?
-//            }
-//
-//            var total: Int
-//            var count: Int
-//            var perPage: Int
-//            var currentPage: Int
-//            var totalPages: Int
-//            var totalResults: Int
-//        }
-//
-//        var pagination: Pagination
-//    }
-//}

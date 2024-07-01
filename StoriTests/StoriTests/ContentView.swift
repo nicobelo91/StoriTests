@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         MoviesView()
+            .foregroundColor(Color.themeDark)
+            .preferredColorScheme(.light)
     }
 }
 

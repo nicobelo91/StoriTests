@@ -8,20 +8,24 @@
 import SwiftUI
 
 struct MovieRow: View {
-    let movie: Movie
+    let movie: MovieModel
     var body: some View {
         NavigationLink(destination: MovieDetailView(movie: movie)) {
             HStack {
-                AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500/\(movie.posterPath)")) { image in
+                AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500/\(movie.backdropPath)")) { image in
                     image.resizable()
                 } placeholder: {
                     ProgressView()
                 }
-                .frame(width: 100, height: 150)
+                .scaledToFit()
+                .frame(width: 100, height: 50)
+                
                 .clipped()
                 VStack(alignment: .leading) {
                     Text(movie.title)
-                    Text(movie.releaseDate)
+                        .font(.body2)
+                    Text(DateHelper.Formatter.longGMTDate.string(from: movie.releaseDate))
+                        .font(.body1)
                 }
             }
         }
@@ -30,5 +34,5 @@ struct MovieRow: View {
 }
 
 #Preview {
-    MovieRow(movie: Movie.example)
+    MovieRow(movie: MovieModel.example)
 }
